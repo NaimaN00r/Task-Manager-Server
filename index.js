@@ -23,19 +23,19 @@ async function run() {
         const myTaskCollections = client.db('taskPortal').collection('myTask');
         const completeTaskCollections = client.db('taskPortal').collection('completeTask');
 
-        app.get('/taskName', async(req, res) => {
-            const query = {};
-            const options = await taskCollections.find(query).toArray();
-            res.send(options)
-        })
+        // app.get('/taskName', async (req, res) => {
+        //     const query = {};
+        //     const options = await taskCollections.find(query).toArray();
+        //     res.send(options)
+        // })
 
-        app.get('/addTask', async(req,res) => {
+        app.get('/addTask', async (req, res) => {
             const query = {};
             const result = await addTaskCollections.find(query).toArray();
             res.send(result)
         })
 
-        app.post('/addTask', async(req, res) => {
+        app.post('/addTask', async (req, res) => {
             const task = req.body;
             const result = await addTaskCollections.insertOne(task);
             res.send(result)
@@ -48,25 +48,47 @@ async function run() {
             res.send(result);
         })
 
-        app.post('/myTask', async(req, res) => {
+        app.post('/myTask', async (req, res) => {
             const task = req.body;
             const result = await myTaskCollections.insertOne(task);
             res.send(result)
         })
-        app.get('/myTask', async(req, res) => {
+        app.get('/myTask', async (req, res) => {
             const query = {};
             const result = await myTaskCollections.find(query).toArray();
             res.send(result)
         })
-        app.get('/myTask/:id', async(req, res) => {
+        app.get('/myTask/:id', async (req, res) => {
             const id = req.params.id;
-            const result = await myTaskCollections.find(id).toArray();
+            console.log(id)
+            // const filter = { _id: id };
+            const result = await myTaskCollections.find(id);
             res.send(result)
         })
-        app.post('/completeTask', async(req, res) => {
+
+        app.delete('/myTask/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: id };
+            const result = await myTaskCollections.deleteOne(filter);
+            res.send(result);
+        })
+
+        app.get('/completeTask', async (req, res) => {
+            const query = {};
+            const result = await completeTaskCollections.find(query).toArray();
+            res.send(result)
+        })
+
+        app.post('/completeTask', async (req, res) => {
             const task = req.body;
             const result = await completeTaskCollections.insertOne(task);
             res.send(result)
+        })
+        app.delete('/completeTask/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await completeTaskCollections.deleteOne(filter);
+            res.send(result);
         })
     }
     finally {
