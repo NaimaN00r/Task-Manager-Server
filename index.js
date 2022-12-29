@@ -48,6 +48,31 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/addTask/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            // const filter = { _id: id };
+            const query = { _id: ObjectId(id) };
+            const result = await addTaskCollections.findOne(query);
+            res.send(result)
+        })
+
+          app.put('/addTask/:id', async(req, res) =>{
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const user = req.body;
+            // console.log(user)
+            const option = {upsert: true};
+            const updateUser = {
+                $set: {
+                    task: user.task,
+                }
+            }
+         const result = await addTaskCollections.updateOne(filter, updateUser, option);
+         res.send(result);
+            
+        })
+
         app.post('/myTask', async (req, res) => {
             const task = req.body;
             const result = await myTaskCollections.insertOne(task);
@@ -62,7 +87,8 @@ async function run() {
             const id = req.params.id;
             console.log(id)
             // const filter = { _id: id };
-            const result = await myTaskCollections.find(id);
+            const query = { _id: ObjectId(id) };
+            const result = await myTaskCollections.find(query).toArray();
             res.send(result)
         })
 
